@@ -1,29 +1,31 @@
 package data;
 
-import java.time.LocalDate;
+public class OrderDetail implements Jsonifiable {
+    private final int orderNumber;
+    private final int orderLineNumber;
+    private final String productName;
+    private final int quantity;
+    private final String price;
 
-public class OrderDetail {
-    private LocalDate orderDate;
-    private String productName;
-    private int quantity;
-    private String price;
-
-    public OrderDetail(LocalDate orderDate, String productName, int quantity, String price) {
-        this.orderDate = orderDate;
+    public OrderDetail(int orderNumber, int orderLineNumber, String productName, int quantity, String price) {
+        this.orderNumber = orderNumber;
+        this.orderLineNumber = orderLineNumber;
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
 
     }
 
-    public String asJson() {
-        return "{\"orderDate\": \"" + orderDate +
-                "\", \"productName\": \"" + productName +
-                "\", \"quantity\": " + quantity +
-                ", \"price\": " + price + "}";
+    public int getOrderLineNumber() {
+        return orderLineNumber;
     }
 
-    public LocalDate getOrderDate() {
-        return orderDate;
+    @Override
+    public String toJson() {
+        return "{\"orderNumber\": " + orderNumber +
+                ", \"orderLineNumber\": " + orderLineNumber +
+                ", \"productName\": \"" + productName +
+                "\", \"quantity\": " + quantity +
+                ", \"price\": " + price + "}";
     }
 }

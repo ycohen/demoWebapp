@@ -2,11 +2,9 @@ $(document).ready(function() {
     console.log("Ready");
     $.get({
         url: '/rest/customers'
-    }).done(function(data, status, jqxhr) {
+    }).done(function(data) {
         var customerList = $('#customerList');
         $('option.customer').remove();
-
-        x = {'data': data, 'status': status, 'jqxhr': jqxhr};
 
         var customers = data['customers'];
 
@@ -20,28 +18,17 @@ function getOrdersFor(customer) {
     $.get({
         url: '/rest/orders',
         data: {customerKey: customer}
-    }).done(function(data, status, jqxhr) {
-        console.log("Orders for " + customer);
-        console.log("Right away, sir!");
-
-        $('tr.order').remove();
-
-        var ordersList = $('#ordersTable');
+    }).done(function(data) {
         var orders = data['orders'];
 
-        if (orders.length === 0) {
-            ordersList.hide();
+        if (orders && orders.length === 0) {
+            $('#orderDetailsListing').hide();
             $('#noResults').show();
         } else {
-            orders.forEach(function (element) {
-                ordersList.append('<tr class="order">' +
-                    '<td>' + element['orderDate'] + '</td>' +
-                    '<td>' + element['productName'] + '</td>' +
-                    '<td>' + element['quantity'] + '</td>' +
-                    '<td>' + element['price'] + '</td>' +
-                    '</tr>');
-            });
-            ordersList.show();
+            var orderDetails = $('#orderDetailsDiv');
+            var html = Mustache.to_html($('#orderDetailTemplate').html(), data);
+            orderDetails.html(html);
+            orderDetails.show();
             $('#noResults').hide();
         }
     });

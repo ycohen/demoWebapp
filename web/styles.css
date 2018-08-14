@@ -1,12 +1,15 @@
-#orderListDiv {
-    float: right;
+#ordersDiv {
+    display: inline-block;
     width: calc(95% - 300px);
+    overflow-y: auto;
+    height: 100vh;
 }
 
 #customerListDiv {
-    float: left;
+    display: inline-block;
     width: 300px;
-    position: fixed;
+    height: 100vh;
+    vertical-align: top;
 }
 
 table, th, td {
@@ -19,5 +22,18 @@ table, th, td {
 }
 
 #logoutDiv {
+    display: inline-block;
+    height: 30px;
+}
+
+#outerDiv {
     position: fixed;
+    height: 100vh;
+    width: 100%;
+}
+
+.orderDiv {
+    border: 1px solid black;
+    padding: 5px;
+    margin-bottom: 5px;
 }

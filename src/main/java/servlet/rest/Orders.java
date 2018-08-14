@@ -1,5 +1,7 @@
 package servlet.rest;
 
+import data.Jsonifiable;
+import data.Order;
 import data.OrderDetail;
 import db.DbManager;
 
@@ -13,57 +15,78 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Path("orders")
 public class Orders {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String doGet(@QueryParam("customerKey") String customerKey) {
-        List<OrderDetail> orders = new ArrayList<>();
+    public String doGet(@QueryParam("customerKey") int customerKey) {
         try (Connection conn = DbManager.getConnection()) {
-            PreparedStatement statement = conn.prepareStatement("SELECT orders.orderDate, orderdetails.orderNumber, productName, " +
-                    "orderdetails.quantityOrdered, orderdetails.priceEach " +
-                "FROM customers NATURAL JOIN orders NATURAL JOIN orderdetails NATURAL JOIN products " +
-                "WHERE customerNumber = ?");
+            Map<Integer, List<OrderDetail>> details = getOrderDetails(customerKey, conn);
+            List<Order> orders = getOrders(customerKey, details, conn);
 
-            statement.setString(1, customerKey);
+            orders.sort(Comparator.comparing(Order::getOrderDate));
 
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                LocalDate orderDate = resultSet.getDate("orderDate").toLocalDate();
-                String productName = resultSet.getString("productName");
-                int quantity = resultSet.getInt("quantityOrdered");
-                String price = resultSet.getString("priceEach");
-
-                OrderDetail orderDetail = new OrderDetail(orderDate, productName, quantity, price);
-                orders.add(orderDetail);
-            }
-
-            orders.sort(Comparator.comparing(OrderDetail::getOrderDate));
-
-            return "{\"orders\": " + getJsonifiedCollection(orders) + "}";
+            return "{\"orders\": " + Jsonifiable.jsonifyCollection(orders) + "}";
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return "{}";
+        return "";
     }
 
-    private StringBuilder getJsonifiedCollection(List<OrderDetail> orderDetailCollection) {
-        StringBuilder jsonResponse = new StringBuilder("[");
+    private List<Order> getOrders(int customerKey, Map<Integer, List<OrderDetail>> details, Connection conn) throws SQLException {
+        List<Order> orders = new ArrayList<>();
 
-        for (OrderDetail orderDetail: orderDetailCollection) {
-            jsonResponse.append(orderDetail.asJson()).append(", ");
+        PreparedStatement statement = conn.prepareStatement("SELECT orderNumber, orderDate, " +
+                    "requiredDate, shippedDate, status, comments, customerNumber " +
+                "FROM customers NATURAL JOIN orders " +
+                "WHERE customerNumber = ?");
+        statement.setInt(1, customerKey);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            int orderNumber = resultSet.getInt("orderNumber");
+            LocalDate orderDate = resultSet.getDate("orderDate").toLocalDate();
+            LocalDate requiredDate = resultSet.getDate("requiredDate").toLocalDate();
+            LocalDate shippedDate = resultSet.getDate("shippedDate").toLocalDate();
+            String status = resultSet.getString("status");
+            String comment = resultSet.getString("comments");
+
+            details.get(orderNumber).sort(Comparator.comparingInt(OrderDetail::getOrderLineNumber));
+
+            Order order = new Order(orderNumber, orderDate, requiredDate, shippedDate, status, comment, details.get(orderNumber));
+            orders.add(order);
         }
 
-        if (jsonResponse.length() > 2) {
-            jsonResponse.delete(jsonResponse.length() - 2, jsonResponse.length());
-        }
-        jsonResponse.append("]");
-        return jsonResponse;
+        return orders;
     }
+
+    private Map<Integer, List<OrderDetail>> getOrderDetails(int customerKey, Connection conn) throws SQLException {
+        Map<Integer, List<OrderDetail>> details = new HashMap<>();
+
+        PreparedStatement statement = conn.prepareStatement("SELECT orderdetails.orderNumber, orderdetails.orderLineNumber, orderdetails.orderNumber, productName, " +
+                "orderdetails.quantityOrdered, orderdetails.priceEach " +
+            "FROM customers NATURAL JOIN orders NATURAL JOIN orderdetails NATURAL JOIN products " +
+            "WHERE customerNumber = ?");
+
+        statement.setInt(1, customerKey);
+
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            int orderNumber = resultSet.getInt("orderNumber");
+            int orderLineNumber = resultSet.getInt("orderLineNumber");
+            String productName = resultSet.getString("productName");
+            int quantity = resultSet.getInt("quantityOrdered");
+            String price = resultSet.getString("priceEach");
+
+            OrderDetail orderDetail = new OrderDetail(orderLineNumber, orderNumber, productName, quantity, price);
+            details.computeIfAbsent(orderNumber, (orderNum) -> new ArrayList<>()).add(orderDetail);
+        }
+
+        return details;
+    }
+
 }
