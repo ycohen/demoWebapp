@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Order implements Jsonifiable {
+public class Order {
     private final int orderNumber;
 
     private final LocalDate orderDate;
@@ -23,18 +23,6 @@ public class Order implements Jsonifiable {
         this.status = status;
         this.comment = comment;
         this.details = new ArrayList<>(details);
-    }
-
-    @Override
-    public String toJson() {
-        return "{\"orderNumber\": " + orderNumber +
-                ", \"orderDate\": \"" + orderDate +
-                "\", \"requiredDate\": \"" + requiredDate +
-                "\", \"shippedDate\": \"" + shippedDate +
-                "\", \"status\": \"" + status +
-                "\", \"comment\": \"" + comment +
-                "\", \"orderDetails\": " + Jsonifiable.jsonifyCollection(details) +
-                "}";
     }
 
     public LocalDate getOrderDate() {

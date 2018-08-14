@@ -1,7 +1,7 @@
 package servlet.rest;
 
+import com.google.gson.Gson;
 import data.Customer;
-import data.Jsonifiable;
 import db.DbManager;
 
 import javax.ws.rs.GET;
@@ -28,19 +28,20 @@ public class Customers {
 
             ResultSet resultSet = statement.executeQuery();
 
-            List<Customer> customerNames = new ArrayList<>();
+            List<Customer> customers = new ArrayList<>();
 
             while (resultSet.next()) {
-                customerNames.add(new Customer(resultSet.getString("customerName"), resultSet.getInt("customerNumber")));
+                customers.add(new Customer(resultSet.getString("customerName"), resultSet.getInt("customerNumber")));
             }
-            customerNames.sort(Comparator.comparing(o -> o.getName().toLowerCase()));
-            String jsonResponse = "{\"customers\": " + Jsonifiable.jsonifyCollection(customerNames) + "}";
+            customers.sort(Comparator.comparing(o -> o.getCustomerName().toLowerCase()));
 
-            return jsonResponse;
+            Gson gson = new Gson();
+
+            return gson.toJson(customers);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return "{}";
+        return "[]";
     }
 }

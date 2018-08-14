@@ -1,6 +1,6 @@
 package servlet.rest;
 
-import data.Jsonifiable;
+import com.google.gson.Gson;
 import data.Order;
 import data.OrderDetail;
 import db.DbManager;
@@ -28,7 +28,9 @@ public class Orders {
 
             orders.sort(Comparator.comparing(Order::getOrderDate));
 
-            return "{\"orders\": " + Jsonifiable.jsonifyCollection(orders) + "}";
+            Gson gson = new Gson();
+
+            return "{\"orders\": " + gson.toJson(orders) + "}";
         } catch (SQLException e) {
             e.printStackTrace();
         }

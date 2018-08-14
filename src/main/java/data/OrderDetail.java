@@ -1,6 +1,6 @@
 package data;
 
-public class OrderDetail implements Jsonifiable {
+public class OrderDetail {
     private final int orderNumber;
     private final int orderLineNumber;
     private final String productName;
@@ -18,14 +18,5 @@ public class OrderDetail implements Jsonifiable {
 
     public int getOrderLineNumber() {
         return orderLineNumber;
-    }
-
-    @Override
-    public String toJson() {
-        return "{\"orderNumber\": " + orderNumber +
-                ", \"orderLineNumber\": " + orderLineNumber +
-                ", \"productName\": \"" + productName +
-                "\", \"quantity\": " + quantity +
-                ", \"price\": " + price + "}";
     }
 }

@@ -35,15 +35,15 @@
             <table>
                 <tr>
                     <td>Order Date</td>
-                    <td>{{orderDate}}</td>
+                    <td>{{orderDate.year}}-{{orderDate.month}}-{{orderDate.day}}</td>
                 </tr>
                 <tr>
                     <td>Required Date</td>
-                    <td>{{requiredDate}}</td>
+                    <td>{{requiredDate.year}}-{{requiredDate.month}}-{{requiredDate.day}}</td>
                 </tr>
                 <tr>
                     <td>Shipped Date</td>
-                    <td>{{shippedDate}}</td>
+                    <td>{{shippedDate.year}}-{{shippedDate.month}}-{{shippedDate.day}}</td>
                 </tr>
                 <tr>
                     <td>Status</td>
@@ -60,13 +60,13 @@
                     <th>Quantity Ordered</th>
                     <th>Price Per</th>
                 </tr>
-                {{#orderDetails}}
+                {{#details}}
                 <tr>
                     <td>{{productName}}</td>
                     <td>{{quantity}}</td>
                     <td>{{price}}</td>
                 </tr>
-                {{/orderDetails}}
+                {{/details}}
             </table>
         </div>
         {{/orders}}
