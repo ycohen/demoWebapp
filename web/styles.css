@@ -1,3 +1,23 @@
+#loginOuterDiv {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: rgba(0, 255, 255, 0.3);
+}
+
+#loginForm {
+    width: 350px;
+    margin: auto;
+    border: 1px solid black;
+    padding: 10px;
+    background-color: white;
+}
+
+#loginButton {
+    margin-left: auto;
+    display: block;
+}
+
 #ordersDiv {
     display: inline-block;
     width: calc(95% - 300px);
@@ -12,7 +32,12 @@
     vertical-align: top;
 }
 
-table, th, td {
+#customerList {
+    min-width: 300px;
+    width: 100%;
+}
+
+.orderDiv table, .orderDiv th, .orderDiv td {
     border: 1px solid black;
     border-collapse: collapse;
 }
