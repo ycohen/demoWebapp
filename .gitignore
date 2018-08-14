@@ -4,4 +4,6 @@
 .idea/tasks.xml
 
 out
+target
+
 *.swp

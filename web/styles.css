@@ -1,0 +1,23 @@
+#orderListDiv {
+    float: right;
+    width: calc(95% - 300px);
+}
+
+#customerListDiv {
+    float: left;
+    width: 300px;
+    position: fixed;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#noResults {
+    display: none;
+}
+
+#logoutDiv {
+    position: fixed;
+}

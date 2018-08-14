@@ -1,16 +1,19 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: yonatan
-  Date: 14/08/18
-  Time: 10:55 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
 <html>
   <head>
-    <title>$Title$</title>
+    <title>Login</title>
   </head>
   <body>
-  $END$
+  <%
+    if (session.getAttribute("error") != null && session.getAttribute("error").equals("yes")) {
+  %>
+  Login error
+  <% } %>
+  <form id="loginForm" action="LoginServlet" method="post">
+    <div>Userame: <input name="username" type="text" required title="username"></div>
+    <div>Password: <input name="password" type="password" required title="password"></div>
+    <button type="submit">Submit</button>
+  </form>
   </body>
 </html>
