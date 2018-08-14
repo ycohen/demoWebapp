@@ -29,8 +29,7 @@ public class AuthenticationFilter implements Filter {
             if (SessionTracker.getInstance().isSessionValid(session.getId())) {
                 filterChain.doFilter(request, response);
             } else {
-                request.getSession().setAttribute("error", "yes");
-                response.sendRedirect("/index.jsp");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
     }

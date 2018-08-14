@@ -1,8 +1,6 @@
 $(document).ready(function() {
     console.log("Ready");
-    $.get({
-        url: '/rest/customers'
-    }).done(function(data) {
+    get('/rest/customers', "", function(data) {
         var customerList = $('#customerList');
         $('option.customer').remove();
 
@@ -15,10 +13,7 @@ $(document).ready(function() {
 });
 
 function getOrdersFor(customer) {
-    $.get({
-        url: '/rest/orders',
-        data: {customerKey: customer}
-    }).done(function(data) {
+    get('/rest/orders', {customerKey: customer}, function(data) {
         var orders = data['orders'];
 
         if (orders && orders.length === 0) {
@@ -30,6 +25,19 @@ function getOrdersFor(customer) {
             orderDetails.html(html);
             orderDetails.show();
             $('#noResults').hide();
+        }
+    });
+}
+
+function get(url, data, success) {
+    $.get({
+        url: url,
+        data: data
+    }).done(function(data) {
+        success(data);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status === 401) {
+            location.replace('index.jsp');
         }
     });
 }
