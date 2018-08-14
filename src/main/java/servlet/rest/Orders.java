@@ -21,15 +21,15 @@ import java.util.List;
 public class Orders {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String doGet(@QueryParam("customer") String customerName) {
+    public String doGet(@QueryParam("customerKey") String customerKey) {
         List<OrderDetail> orders = new ArrayList<>();
         try (Connection conn = DbManager.getConnection()) {
             PreparedStatement statement = conn.prepareStatement("SELECT orders.orderDate, orderdetails.orderNumber, productName, " +
                     "orderdetails.quantityOrdered, orderdetails.priceEach " +
                 "FROM customers NATURAL JOIN orders NATURAL JOIN orderdetails NATURAL JOIN products " +
-                "WHERE customerName = ?");
+                "WHERE customerNumber = ?");
 
-            statement.setString(1, customerName);
+            statement.setString(1, customerKey);
 
             ResultSet resultSet = statement.executeQuery();
 

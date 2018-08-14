@@ -11,7 +11,7 @@ $(document).ready(function() {
         var customers = data['customers'];
 
         customers.forEach(function(element) {
-            customerList.append('<option class="customer" onclick="getOrdersFor(\'' + element + '\')">' + element + '</option>');
+            customerList.append('<option class="customer" onclick="getOrdersFor(\'' + element['customerNumber'] + '\')">' + element['customerName'] + '</option>');
         });
     })
 });
@@ -19,7 +19,7 @@ $(document).ready(function() {
 function getOrdersFor(customer) {
     $.get({
         url: '/rest/orders',
-        data: {customer: customer}
+        data: {customerKey: customer}
     }).done(function(data, status, jqxhr) {
         console.log("Orders for " + customer);
         console.log("Right away, sir!");
